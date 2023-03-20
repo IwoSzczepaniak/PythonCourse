@@ -4,7 +4,7 @@ import string
 # zad 1
 def check(exp):
     var = string.ascii_lowercase
-    opp = ['&', '|', '>', '^', '~']
+    opp = ['&', '|', '>', '^']
     brackets = ['(', ')']
     state = True
     # True - waiting for var or opening bracket
@@ -22,6 +22,8 @@ def check(exp):
             elif exp[j] == ')':
                 state = False
                 i -= 1
+        elif exp[j] == "~":
+            if not state: return False
         else:
             if state:
                 if exp[j] in var:
@@ -84,7 +86,8 @@ def test_bal():
 
 # zad 4
 def onp(w):
-    w = bracket(w)
+    if len(w) > 1:
+        w = bracket(w)
     p = bal(w, '>')
     if p: return onp(w[:p]) + onp(w[p + 1:]) + w[p]
     p = bal(w, ['&', '|'])
@@ -92,7 +95,7 @@ def onp(w):
     p = bal(w, '^')
     if p: return onp(w[:p]) + onp(w[p + 1:]) + w[p]
     p = bal(w, '~')
-    if p: return onp(w[:p]) + onp(w[p + 1:]) + w[p]
+    if p or (len(w) > 0 and w[0] == "~"): return onp(w[:p]) + onp(w[p + 1:]) + w[p]
 
     return w
 
@@ -115,7 +118,7 @@ def map(exp, vec):
         if el in var:
             if el not in val_dict:
                 if i == len(vec):
-                    # print(f"Error in {exp} for args: '{vec}' - not enough arguments")
+                    print(f"In {exp} for args: '{vec}' - not enough arguments")
                     return False
                 val_dict[el] = vec[i]
                 i += 1
@@ -136,7 +139,7 @@ def test_map():
 
 # zad6
 def gen(n):
-    ret = []
+    ret = ['0'*n]
     for i in range(1, 2 ** n):
         s = bin(i)[2:]
         s = '0' * (n - len(s)) + s
@@ -215,7 +218,7 @@ def tautology(expr):
     for el in expr:
         if el in var:
             args.add(el)
-    # expr = bracket(expr)
+    expr = bracket(expr)
     expr = onp(expr)
     possible = gen(len(args))
     for vec in possible:
@@ -227,7 +230,7 @@ def tautology(expr):
 
 def test_tautology():
     assert tautology("a&b>a") == True
-    assert tautology("a|a") == True
+    assert tautology("a|a") == False
     assert tautology("((a>b)&(b>c))>(a>c)") == True
     assert tautology("a^b>a|b") == True
     assert tautology("((~a>b)&(~a>~b))>a") == True
@@ -247,7 +250,7 @@ if __name__ == '__main__':
             # no gen_test - should be ok
             test_val()
             test_tautology()
-            print("All tests passed")
+            print("All tests passed - warning mean that it is ok")
         elif check(w):
             if tautology(w):
                 print("TAK")
