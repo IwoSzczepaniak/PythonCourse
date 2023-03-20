@@ -210,22 +210,24 @@ def test_tautology():
     assert tautology("a&b>a") == True
     assert tautology("a|a") == True
     assert tautology("((a>b)&(b>c))>(a>c)") == True
+    assert tautology("a^b>a|b") == True
 
 
 if __name__ == '__main__':
-    test_check()
-    test_bracket()
-    test_bal()
-    test_onp()
-    test_map()
-    # no gen_test - should be ok
-    test_val()
-    test_tautology()
-
     while True:
         w = input(">>")
         if w in ["EXIT", "exit"]:
             break
+        elif w in ["test", "TEST"]:
+            test_check()
+            test_bracket()
+            test_bal()
+            test_onp()
+            test_map()
+            # no gen_test - should be ok
+            test_val()
+            test_tautology()
+            print("All tests passed")
         elif check(w):
             if tautology(w): print("TAK")
             else: print("NIE")
