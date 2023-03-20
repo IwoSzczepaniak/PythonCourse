@@ -4,7 +4,7 @@ import string
 # zad 1
 def check(exp):
     var = string.ascii_lowercase
-    opp = ['&', '|', '>', '^']
+    opp = ['&', '|', '>', '^', '~']
     brackets = ['(', ')']
     state = True
     # True - waiting for var or opening bracket
@@ -91,6 +91,8 @@ def onp(w):
     if p: return onp(w[:p]) + onp(w[p + 1:]) + w[p]
     p = bal(w, '^')
     if p: return onp(w[:p]) + onp(w[p + 1:]) + w[p]
+    p = bal(w, '~')
+    if p: return onp(w[:p]) + onp(w[p + 1:]) + w[p]
 
     return w
 
@@ -151,11 +153,27 @@ def val(expr):
         expr = expr[1:]
         if el in values:
             stack.append(el)
+        elif el == '~':
+            first = bool(int(stack.pop()))
+            ret = not first
+
+            if ret:
+                if len(expr) == 0:
+                    return '1'
+                else:
+                    expr = '1' + expr
+            elif not ret:
+                if len(expr) == 0:
+                    return '0'
+                else:
+                    expr = '0' + expr
+
+
         else:
             second = bool(int(stack.pop()))
             first = bool(int(stack.pop()))
 
-            if el == "^":
+            if el == '^':
                 ret = (first and not second) or (not first and second)
             elif el == '&':
                 ret = first and second
@@ -186,7 +204,8 @@ def test_val():
     assert val("01^") == '1'
     assert val("00^") == '0'
     assert val("11^") == '0'
-
+    assert val("1~") == '0'
+    assert val("0~") == '1'
 
 
 # zad 8
@@ -211,12 +230,13 @@ def test_tautology():
     assert tautology("a|a") == True
     assert tautology("((a>b)&(b>c))>(a>c)") == True
     assert tautology("a^b>a|b") == True
+    assert tautology("((~a>b)&(~a>~b))>a") == True
 
 
 if __name__ == '__main__':
     while True:
         w = input(">>")
-        if w in ["EXIT", "exit"]:
+        if w in ["EXIT", "exit", "quit", "QUIT"]:
             break
         elif w in ["test", "TEST"]:
             test_check()
@@ -229,7 +249,9 @@ if __name__ == '__main__':
             test_tautology()
             print("All tests passed")
         elif check(w):
-            if tautology(w): print("TAK")
-            else: print("NIE")
+            if tautology(w):
+                print("TAK")
+            else:
+                print("NIE")
         else:
-            print("EROOR")
+            print("ERROR")
