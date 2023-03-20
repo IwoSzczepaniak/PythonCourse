@@ -4,7 +4,7 @@ import string
 # zad 1
 def check(exp):
     var = string.ascii_lowercase
-    opp = ['&', '|', '>']
+    opp = ['&', '|', '>', '^']
     brackets = ['(', ')']
     state = True
     # True - waiting for var or opening bracket
@@ -89,6 +89,9 @@ def onp(w):
     if p: return onp(w[:p]) + onp(w[p + 1:]) + w[p]
     p = bal(w, ['&', '|'])
     if p: return onp(w[:p]) + onp(w[p + 1:]) + w[p]
+    p = bal(w, '^')
+    if p: return onp(w[:p]) + onp(w[p + 1:]) + w[p]
+
     return w
 
 
@@ -152,7 +155,9 @@ def val(expr):
             second = bool(int(stack.pop()))
             first = bool(int(stack.pop()))
 
-            if el == '&':
+            if el == "^":
+                ret = (first and not second) or (not first and second)
+            elif el == '&':
                 ret = first and second
             elif el == "|":
                 ret = first or second
@@ -177,6 +182,11 @@ def val(expr):
 def test_val():
     assert val('10>') == '0'
     assert val("101>&") == '1'
+    assert val("10^") == '1'
+    assert val("01^") == '1'
+    assert val("00^") == '0'
+    assert val("11^") == '0'
+
 
 
 # zad 8
@@ -197,9 +207,9 @@ def tautology(expr):
 
 
 def test_tautology():
-    assert tautology("a^b>a") == True
+    assert tautology("a&b>a") == True
     assert tautology("a|a") == True
-    assert tautology("((a>b)^(b>c))>(a>c)") == True
+    assert tautology("((a>b)&(b>c))>(a>c)") == True
 
 
 if __name__ == '__main__':
@@ -214,10 +224,10 @@ if __name__ == '__main__':
 
     while True:
         w = input(">>")
-        if w == "exit":
+        if w in ["EXIT", "exit"]:
             break
         elif check(w):
             if tautology(w): print("TAK")
             else: print("NIE")
         else:
-            print("error")
+            print("EROOR")
