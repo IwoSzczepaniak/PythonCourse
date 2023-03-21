@@ -4,6 +4,7 @@ import string
 # zad 1
 def check(exp):
     var = string.ascii_lowercase
+    var += 'T' + 'F'
     opp = ['&', '|', '>', '^']
     brackets = ['(', ')']
     state = True
@@ -110,10 +111,13 @@ def test_onp():
 # zad 5
 def map(exp, vec):
     var = string.ascii_lowercase
+    var += 'T' + 'F'
     res = ""
 
     i = 0
     val_dict = dict()
+    val_dict['T'] = '1'
+    val_dict['F'] = '0'
     for el in exp:
         if el in var:
             if el not in val_dict:
@@ -139,7 +143,7 @@ def test_map():
 
 # zad6
 def gen(n):
-    ret = ['0'*n]
+    ret = ['0' * n]
     for i in range(1, 2 ** n):
         s = bin(i)[2:]
         s = '0' * (n - len(s)) + s
@@ -148,6 +152,19 @@ def gen(n):
 
 
 # zad 7
+def ret_handler(ret, expr):
+    if ret:
+        if len(expr) == 0:
+            return '1'
+        else:
+            return '1' + expr
+    elif not ret:
+        if len(expr) == 0:
+            return '0'
+        else:
+            return '0' + expr
+
+
 def val(expr):
     values = ['0', '1']
     stack = []
@@ -157,20 +174,12 @@ def val(expr):
         if el in values:
             stack.append(el)
         elif el == '~':
+
             first = bool(int(stack.pop()))
             ret = not first
 
-            if ret:
-                if len(expr) == 0:
-                    return '1'
-                else:
-                    expr = '1' + expr
-            elif not ret:
-                if len(expr) == 0:
-                    return '0'
-                else:
-                    expr = '0' + expr
-
+            expr = ret_handler(ret, expr)
+            if len(expr) == 1: return expr
 
         else:
             second = bool(int(stack.pop()))
@@ -187,16 +196,9 @@ def val(expr):
             else:
                 return None
 
-            if ret:
-                if len(expr) == 0:
-                    return '1'
-                else:
-                    expr = '1' + expr
-            elif not ret:
-                if len(expr) == 0:
-                    return '0'
-                else:
-                    expr = '0' + expr
+            expr = ret_handler(ret, expr)
+            if len(expr) == 1: return expr
+
     return expr
 
 
@@ -214,6 +216,7 @@ def test_val():
 # zad 8
 def tautology(expr):
     var = string.ascii_lowercase
+    # var += 'T' + 'F'
     args = set()
     for el in expr:
         if el in var:
@@ -234,6 +237,8 @@ def test_tautology():
     assert tautology("((a>b)&(b>c))>(a>c)") == True
     assert tautology("a^b>a|b") == True
     assert tautology("((~a>b)&(~a>~b))>a") == True
+    assert tautology("T>a") == False
+    assert tautology("a>T") == True
 
 
 if __name__ == '__main__':
@@ -250,7 +255,7 @@ if __name__ == '__main__':
             # no gen_test - should be ok
             test_val()
             test_tautology()
-            print("All tests passed - warning mean that it is ok")
+            print("All tests passed - warning can mean that it is ok")
         elif check(w):
             if tautology(w):
                 print("TAK")
