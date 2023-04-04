@@ -28,20 +28,20 @@ client.on_message = on_message
 client.connect(broker_address, port=port)
 client.subscribe(speak_topic)
 
+def say(text):
+    engine.say(text)
+    engine.runAndWait()
+
 # Function to handle button click
 def on_button_click():
-    # Play start message using TTS engine
-    engine.say("Początek odsłuchu.")
-    engine.runAndWait()
-    # Play each message in the list using TTS engine
-    for i, text in enumerate(Texts):
-        engine.say(f"Wiadomość: {i+1}:")
-        engine.say(text)
-        engine.runAndWait()
-        engine.runAndWait()
-    # Play end message using TTS engine
-    engine.say("Koniec wiadomości.")
-    engine.runAndWait()
+    if len(Texts) > 0:
+        say("Oto nagrane wiadomości.")
+        for i, text in enumerate(Texts):
+            say(f"Wiadomość: {i+1}:")
+            say(text)
+        say("Koniec wiadomości.")
+    else:
+        say("Brak wiadomości")
 
 # Create main window
 root = tk.Tk()

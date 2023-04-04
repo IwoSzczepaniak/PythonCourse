@@ -19,12 +19,12 @@ def get_text():
     r = sr.Recognizer()
     with sr.Microphone() as source:
         r.adjust_for_ambient_noise(source, duration=1)
+        r.energy_threshold = 100  # Set the energy threshold to 500
         print("Słucham...")
         audio = r.listen(source)
     try:
         text = r.recognize_google(audio, language='pl-PL')
         print("Rozpoznano: " + text)
-        send_message(text)
         return text
     except sr.UnknownValueError:
         print("Nie udało się rozpoznać mowy")
