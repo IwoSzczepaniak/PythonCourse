@@ -1,2 +1,2 @@
 # PythonCourse
-Repozytorium przedmiotu obieralnego z języka python na 4 semestrze studiów
+Repository of elective python course for the 4th semester at AGH Computer Science
