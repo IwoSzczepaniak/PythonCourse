@@ -30,6 +30,9 @@ CAR_STARTING_X = 60
 CAR_STARTING_Y = 100
 
 MAX_CIRCLES = 5
+BUDGET = 200
+LAP_INCOME = 10
+SHOT_EXPENCE = 50
 
 
 # CAR CLASS
@@ -50,6 +53,12 @@ class Car(pygame.sprite.Sprite):
         self.starts = 0
         self.stop_event = False
 
+    def kill(self):
+        self.rect.x = self.CAR_STARTING_X
+        self.rect.y = self.CAR_STARTING_Y
+        self.starts += 1
+        self.circles = 0
+
 
     def move(self):
         c_flag = 10
@@ -61,17 +70,12 @@ class Car(pygame.sprite.Sprite):
 
             # Check if the car crosses the boundaries of the circuit area
             if self.rect.x < 0 or self.rect.x >= screen_WIDTH or self.rect.y < 0 or self.rect.y >= screen_HEIGHT:
-                self.rect.x = self.CAR_STARTING_X
-                self.rect.y = self.CAR_STARTING_Y
-                self.starts += 1
-                self.circles = 0
+                self.kill()
 
             # check if not inside race highway
             if middle_rect_x[0] <= self.rect.x <= middle_rect_x[0] + middle_rect_x[1] and middle_rect_y[0] <= self.rect.y <= middle_rect_y[0] + middle_rect_y[1]:
-                self.rect.x = self.CAR_STARTING_X
-                self.rect.y = self.CAR_STARTING_Y
-                self.starts += 1
-                self.circles = 0
+                self.kill()
+
 
             if self.rect.y <= 200 and 5 >= META_X - self.rect.x >= 0 and c_flag > 10:
                 self.circles += 1
