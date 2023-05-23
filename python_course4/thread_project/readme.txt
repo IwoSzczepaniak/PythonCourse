@@ -1,0 +1,1 @@
+To start simulation run python file car_threads
