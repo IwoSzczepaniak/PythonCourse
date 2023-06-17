@@ -1,6 +1,7 @@
 import pygame
 from tkinter import Label, Entry, Button, Tk, BOTTOM
 from random import choice
+from time import sleep
 
 # Domyślne stawienia ekranu
 WIDTH = 800
@@ -37,12 +38,29 @@ def game_loop():
         return True
 
     def refresh():
+        def victory_display():
+            sleep(0.5)
+            pygame.quit()
+            root = Tk()
+            root.title("WYGRANA")
+            root.geometry("500x100")
+
+            root.configure(bg='yellow')
+            label_input = Label(root, text=f"\nGratulacje, wygrałeś!\n")
+            label_input.config(fg="grey")
+            label_input.config(font=("Courier", 24))
+            label_input.configure(bg='yellow')
+            label_input.pack()
+            
+            root.update()
+
         nonlocal running
         screen.fill(BLACK)
         draw_grid()
         if check_game_over():
-            print("Gra zakończona")
             running = False
+            victory_display()          
+            
         pygame.display.flip()
 
     def color_neighbours(x, y):
@@ -79,7 +97,7 @@ def game_loop():
     pygame.quit()
 
 
-def start():
+def start_menu():
     def set_values_correctly(input_val):
         global N, GRID_SIZE, HEIGHT, WIDTH, grid
 
@@ -151,4 +169,4 @@ def start():
 
 
 if __name__ == "__main__":
-    start()
+    start_menu()
