@@ -62,8 +62,8 @@ def game_loop():
             y = mouse_pos[1] // GRID_SIZE
             color_neighbours(x, y)
             
+    
     pygame.init()
-
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     clock = pygame.time.Clock()
 
@@ -110,39 +110,43 @@ def start():
         label_input.pack()
 
 
-    def define():
-        input_val = enter_input
-        try:
-            if set_values_correctly(input_val): 
-                game_loop()
-        except ValueError:
-            print_error("Wprowadź liczbę całkowitą")
+    def setup():
+        nonlocal root
+        root.title("Wprowadź ilość komórek w linii")
+        root.geometry("500x200")
 
-    root = Tk()
-    root.title("Wprowadź ilość komórek w linii")
-
-    root.geometry("500x200")
-
-
-    label_info = Label(root, text="Użytkownik na wejściu otrzymuje losowo wygenerowaną planszę z NxN kafelkami " +
+    def texts():
+        nonlocal root
+        label_info = Label(root, text="Użytkownik na wejściu otrzymuje losowo wygenerowaną planszę z NxN kafelkami " +
                         "w kolorach zielonym i czerwonym. Celem gry jest wyeliminowanie koloru zielonego z planszy. "+
                         "Aby to zrobić należy kliknąć na dowolny kafelek, czego skutkiem będzie zamiana kolorów " + 
                        "w tej komórce oraz jej sąsiednich(na planie krzyżyka). \n\n", wraplength=400, justify="center")
-    label_info.pack()
+        label_info.pack()
 
-    label_input = Label(root, text="Wprowadź ilość komórek w linii - używaj tylko wartości całkowitych\n")
-    label_input.pack()
+        label_input = Label(root, text="Wprowadź ilość komórek w linii - używaj tylko wartości całkowitych\n")
+        label_input.pack()
 
-    enter_input = Entry(root)
-    enter_input.pack()
+    def start_keys():
+        def define():
+            input_val = enter_input
+            try:
+                if set_values_correctly(input_val): 
+                    game_loop()
+            except ValueError:
+                print_error("Wprowadź liczbę całkowitą")
 
-    button_start = Button(root, text="Start", command=define)
-    button_start.pack(side=BOTTOM)
+        nonlocal root
+        enter_input = Entry(root)
+        enter_input.pack()
 
-    # make spacebar do the 'define' function
-    root.bind("<Return>", lambda event: define())
+        button_start = Button(root, text="Start", command=define)
+        button_start.pack(side=BOTTOM)
+        root.bind("<Return>", lambda event: define())
 
-
+    root = Tk()
+    setup()
+    texts()
+    start_keys()
     root.mainloop()
 
 
