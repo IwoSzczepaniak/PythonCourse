@@ -42,14 +42,15 @@ def _xor(wy,we):
 def _not(wy,we):
   STAN[wy] = 1-STAN[we] 
 
-def start_simulation(f_name):
-
+def start_simulation(f_name, n_LEDS = 2):
+    global WINDOW_SIZE
     LEDS = []
     BUTTONS = []
     OUTPUTS = []
 
-    n_LEDS = 2
     n_OUTPUTS = 2
+
+    if n_LEDS>5:WINDOW_SIZE+=80*(n_LEDS-5)
 
     if f_name == "NOT": 
        n_LEDS = 1
@@ -71,13 +72,6 @@ def start_simulation(f_name):
     elif f_name == "XOR": 
        n_OUTPUTS = 1
        XOR(n_LEDS, *range(n_LEDS))
-    elif f_name == "RS":
-       n_LEDS = 4
-       RS(n_LEDS, *range(4))
-    elif f_name == "JK":
-       n_LEDS = 3
-       n_OUTPUTS = 2
-       JK("time", 0, 1, 2, n_LEDS, n_LEDS+1)
     elif f_name == "RS":
        n_LEDS = 4
        RS(n_LEDS, *range(4))
@@ -186,4 +180,8 @@ def start_simulation(f_name):
         root.update()
 
 if __name__ == '__main__':
-    start_simulation("COUNTER16")
+   f_name = input("input function name\n")
+   if f_name in FUNCTIONS:
+      start_simulation(f_name)
+   else:
+      print("wrong function name")
